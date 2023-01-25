@@ -1,3 +1,3 @@
 # Python Webscraping Script
 
-Used to monitor for updates within the Case of the Month page @ [College of Phsiotherapists of Ontario](https://www.collegept.org/)
+Sends a notification email everytime there is an update within the Case of the Month page @ [College of Phsiotherapists of Ontario](https://www.collegept.org/)
