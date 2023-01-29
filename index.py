@@ -39,38 +39,6 @@ current_str_date = ''.join([str(d) for d in unicode_date])
 
 print(f"current_str_date: {current_str_date}")
 
-while True:
-    try:
-        time.sleep(5)
-        new_response = requests.get(url, headers=HEADERS)
-        new_tree = html.fromstring(response.content)
-        new_unicode_date = tree.xpath('//*[@id="cph_content_T7A75863F005_Col00"]/div[1]/ul/li[1]/div[1]/text()')
-        new_str_date = ''.join([str(d) for d in unicode_date])
-        print(f"new_str_date: {new_str_date}")
-
-        if current_str_date != new_str_date:
-            print("nothing changed")
-            continue
-        else:
-            print("site updated! sending notification email")
-            # send email notification
-            subject = 'New Case of the Month added!'
-            message = 'Click here to read: https://www.collegept.org/case-of-the-month'
-            send_email(recipients, subject, message)
-
-            response = requests.get(url, headers=HEADERS)
-            tree = html.fromstring(response.content)
-            unicode_date = tree.xpath('//*[@id="cph_content_T7A75863F005_Col00"]/div[1]/ul/li[1]/div[1]/text()')
-            current_str_date = ''.join([str(d) for d in unicode_date])
-            print(f"updated current_str_date: {current_str_date}")
-            time.sleep(5)
-            continue
-
-    except Exception as e:
-        print(f"Error! Sending error email. {e}")
-        subject = 'Error with Python Script: COP - Case of the Month'
-        message = f'Error with COP - Case of the Month. {e}'
-        send_email(error_address, subject, message)
 
 def send_email(to, subject, message):
     try:
@@ -85,3 +53,42 @@ def send_email(to, subject, message):
             smtp.send_message(msg)    
             smtp.close()
             print ("Email sent successfully!")   
+        return True
+    except Exception as e:
+        print("Problem while sending email")
+        print(str(e))
+    return False
+
+
+while True:
+    try:
+        time.sleep(43200)
+        new_response = requests.get(url, headers=HEADERS)
+        new_tree = html.fromstring(response.content)
+        new_unicode_date = tree.xpath('//*[@id="cph_content_T7A75863F005_Col00"]/div[1]/ul/li[1]/div[1]/text()')
+        new_str_date = ''.join([str(d) for d in unicode_date])
+        print(f"new_str_date: {new_str_date}")
+
+        if current_str_date == new_str_date:
+            print("nothing changed")
+            continue
+        else:
+            print("site updated! sending notification email")
+            # send email notification
+            subject = 'New Case of the Month added!'
+            message = 'Click here to read: https://www.collegept.org/case-of-the-month'
+            send_email(recipients, subject, message)
+            time.sleep(43200)
+
+            response = requests.get(url, headers=HEADERS)
+            tree = html.fromstring(response.content)
+            unicode_date = tree.xpath('//*[@id="cph_content_T7A75863F005_Col00"]/div[1]/ul/li[1]/div[1]/text()')
+            current_str_date = ''.join([str(d) for d in unicode_date])
+            print(f"updated current_str_date: {current_str_date}")
+            continue
+
+    except Exception as e:
+        print(f"Error! Sending error email. {e}")
+        subject = 'Error with Python Script: COP - Case of the Month'
+        message = f'Error with COP - Case of the Month. {e}'
+        send_email(error_address, subject, message)
